@@ -4,7 +4,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HeroSection extends StatelessWidget {
-  const HeroSection({super.key});
+  final VoidCallback? onScrollToExplore;
+
+  const HeroSection({super.key, this.onScrollToExplore});
 
   @override
   Widget build(BuildContext context) {
@@ -33,15 +35,17 @@ class HeroSection extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       ),
-              child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: isMobile ? 24 : 48,
-              vertical: 24,
-            ),
+      child: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 24 : 48,
+            vertical: 24,
+          ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Add top padding to avoid header overlap
+              const SizedBox(height: 80),
+
               // Main Title
               Text(
                 'JAFARIYA SQUAD',
@@ -169,22 +173,25 @@ class HeroSection extends StatelessWidget {
               const Spacer(),
 
               // Scroll Indicator
-              Column(
-                children: [
-                  Text(
-                    'Scroll to explore',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white.withOpacity(0.7),
+              GestureDetector(
+                onTap: onScrollToExplore,
+                child: Column(
+                  children: [
+                    Text(
+                      'Scroll to explore',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(0.7),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.white.withOpacity(0.7),
-                    size: 24,
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.white.withOpacity(0.7),
+                      size: 24,
+                    ),
+                  ],
+                ),
               ).animate().fadeIn(duration: 800.ms, delay: 800.ms),
             ],
           ),

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class CustomNavigationBar extends StatefulWidget {
-  const CustomNavigationBar({super.key});
+  final Function(String)? onSectionTap;
+
+  const CustomNavigationBar({super.key, this.onSectionTap});
 
   @override
   State<CustomNavigationBar> createState() => _CustomNavigationBarState();
@@ -37,8 +39,8 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
     return Container(
       decoration: BoxDecoration(
         color: _isScrolled
-            ? Theme.of(context).colorScheme.surface.withOpacity(0.8)
-            : Colors.transparent,
+            ? Theme.of(context).colorScheme.surface.withOpacity(0.95)
+            : Colors.black.withOpacity(0.3),
         boxShadow: _isScrolled
             ? [
                 BoxShadow(
@@ -83,7 +85,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFFD32F2F),
+                          color: Colors.white,
                         ),
                       ),
                   ],
@@ -103,6 +105,10 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                   onTap: () => _scrollToSection('gallery'),
                 ),
                 _NavItem(
+                  title: 'Forms',
+                  onTap: () => _scrollToSection('forms'),
+                ),
+                _NavItem(
                   title: 'Contact',
                   onTap: () => _scrollToSection('contact'),
                 ),
@@ -113,10 +119,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                 onPressed: () {
                   // Theme toggle would be implemented here
                 },
-                icon: Icon(
-                  Icons.brightness_6,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+                icon: Icon(Icons.brightness_6, color: Colors.white),
               ),
 
               // Mobile Menu Button
@@ -125,10 +128,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                   onPressed: () {
                     _showMobileMenu(context);
                   },
-                  icon: Icon(
-                    Icons.menu,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                  icon: Icon(Icons.menu, color: Colors.white),
                 ),
             ],
           ),
@@ -138,52 +138,152 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
   }
 
   void _scrollToSection(String section) {
-    // Implementation for smooth scrolling to sections
-    print('Scrolling to $section');
+    widget.onSectionTap?.call(section);
   }
 
   void _showMobileMenu(BuildContext context) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.7,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          color: Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
+            // Handle bar
             Container(
               width: 40,
               height: 4,
-              margin: const EdgeInsets.symmetric(vertical: 12),
+              margin: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            _MobileNavItem(
-              title: 'Home',
-              onTap: () => _scrollToSection('home'),
+
+            // Header
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD32F2F),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'JS',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Jafariya Squad',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFD32F2F),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            _MobileNavItem(
-              title: 'Team',
-              onTap: () => _scrollToSection('team'),
+
+            const Divider(height: 1),
+
+            // Navigation Items
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                children: [
+                  _MobileNavItem(
+                    title: 'Home',
+                    icon: Icons.home,
+                    onTap: () => _scrollToSection('home'),
+                  ),
+                  _MobileNavItem(
+                    title: 'Team',
+                    icon: Icons.people,
+                    onTap: () => _scrollToSection('team'),
+                  ),
+                  _MobileNavItem(
+                    title: 'Events',
+                    icon: Icons.event,
+                    onTap: () => _scrollToSection('events'),
+                  ),
+                  _MobileNavItem(
+                    title: 'Gallery',
+                    icon: Icons.photo_library,
+                    onTap: () => _scrollToSection('gallery'),
+                  ),
+                  _MobileNavItem(
+                    title: 'Forms',
+                    icon: Icons.description,
+                    onTap: () => _scrollToSection('forms'),
+                  ),
+                  _MobileNavItem(
+                    title: 'Contact',
+                    icon: Icons.contact_mail,
+                    onTap: () => _scrollToSection('contact'),
+                  ),
+                ],
+              ),
             ),
-            _MobileNavItem(
-              title: 'Events',
-              onTap: () => _scrollToSection('events'),
+
+            // Footer
+            Container(
+              padding: const EdgeInsets.all(24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      // Theme toggle
+                    },
+                    icon: Icon(
+                      Icons.brightness_6,
+                      color: Colors.grey[600],
+                      size: 24,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      // Share
+                    },
+                    icon: Icon(Icons.share, color: Colors.grey[600], size: 24),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      // Settings
+                    },
+                    icon: Icon(
+                      Icons.settings,
+                      color: Colors.grey[600],
+                      size: 24,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            _MobileNavItem(
-              title: 'Gallery',
-              onTap: () => _scrollToSection('gallery'),
-            ),
-            _MobileNavItem(
-              title: 'Contact',
-              onTap: () => _scrollToSection('contact'),
-            ),
-            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -208,10 +308,10 @@ class _NavItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: Colors.white,
             ),
           ),
         ),
@@ -222,16 +322,31 @@ class _NavItem extends StatelessWidget {
 
 class _MobileNavItem extends StatelessWidget {
   final String title;
+  final IconData icon;
   final VoidCallback onTap;
 
-  const _MobileNavItem({required this.title, required this.onTap});
+  const _MobileNavItem({
+    required this.title,
+    required this.icon,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      leading: Icon(icon, color: const Color(0xFFD32F2F), size: 24),
       title: Text(
         title,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+          color: Colors.black87,
+        ),
+      ),
+      trailing: const Icon(
+        Icons.arrow_forward_ios,
+        color: Colors.grey,
+        size: 16,
       ),
       onTap: () {
         Navigator.pop(context);
